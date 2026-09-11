@@ -17,11 +17,15 @@ class Keel < Formula
 
     # Keel's templates ship inside a SwiftPM resource bundle, and Bundle.module
     # looks for it beside the executable. Installing the binary alone leaves
-    # `keel new` dying at run time on a bundle that was never copied, so the two
-    # are installed together and bin gets a symlink to them.
+    # `keel new` dying at run time on a bundle that was never copied.
+    #
+    # They go in libexec together, reached through an exec script rather than a
+    # symlink: Bundle.main resolves to the directory of the path that was
+    # invoked, so a symlink in bin sends Keel looking for the bundle in bin,
+    # where it is not. An exec script runs the real path instead.
     libexec.install ".build/release/keel"
     libexec.install ".build/release/Keel_KeelKit.bundle"
-    bin.install_symlink libexec/"keel"
+    bin.write_exec_script libexec/"keel"
   end
 
   test do
