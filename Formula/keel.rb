@@ -1,8 +1,8 @@
 class Keel < Formula
   desc "Create, understand, and maintain iOS projects from the terminal"
   homepage "https://github.com/GRimAce11/Keel"
-  url "https://github.com/GRimAce11/Keel/archive/refs/tags/v1.0.1.tar.gz"
-  sha256 "6980b17bc15c7439bb3f123edf00d3403feae4e77546307c953929a5d56e2586"
+  url "https://github.com/GRimAce11/Keel/archive/refs/tags/v1.0.2.tar.gz"
+  sha256 "28ec69f803a8104b3f4efda1d28246f9e19ffd74cc4641f66ddf1e3c9109eef4"
   license "MIT"
   head "https://github.com/GRimAce11/Keel.git", branch: "main"
 
