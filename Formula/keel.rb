@@ -14,7 +14,14 @@ class Keel < Formula
     # --disable-sandbox: SwiftPM resolves swift-argument-parser and swift-syntax
     # over the network, which Homebrew's build sandbox blocks.
     system "swift", "build", "--disable-sandbox", "-c", "release"
-    bin.install ".build/release/keel"
+
+    # Keel's templates ship inside a SwiftPM resource bundle, and Bundle.module
+    # looks for it beside the executable. Installing the binary alone leaves
+    # `keel new` dying at run time on a bundle that was never copied, so the two
+    # are installed together and bin gets a symlink to them.
+    libexec.install ".build/release/keel"
+    libexec.install ".build/release/Keel_KeelKit.bundle"
+    bin.install_symlink libexec/"keel"
   end
 
   test do
