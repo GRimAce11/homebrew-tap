@@ -23,7 +23,7 @@ this is where Keel lives until core is a realistic option.
 ## Updating the formula for a new release
 
 ```bash
-VERSION=0.3.0
+VERSION=1.0.3
 curl -sL -o /tmp/keel.tar.gz \
   "https://github.com/GRimAce11/Keel/archive/refs/tags/v${VERSION}.tar.gz"
 shasum -a 256 /tmp/keel.tar.gz
