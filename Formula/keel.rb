@@ -7,8 +7,9 @@ class Keel < Formula
 
   bottle do
     root_url "https://github.com/GRimAce11/homebrew-tap/releases/download/bottle-1.2.2"
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "bd011653bea5e73dd9754e786cb36180932403ac34da962b5fa0104ad4c6f560"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "e196decb3feacbe6a8142c2055e6361467d5e06958218ab28acfd31d20b0fec7"
+    sha256 cellar: :any_skip_relocation, arm64_tahoe:   "053d32530b187070c5ba5390b03a10ca67b363e0c98eee5302e4cca656e86896"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "283e81863378d941defc1d32f9a263ff49ecf406db32b60daab1e5b17da3b086"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "67691e185a6d2eac4fa9d0740b2815b834fe8933606f21323575a8fd04867559"
   end
 
   head "https://github.com/GRimAce11/Keel.git", branch: "main"
