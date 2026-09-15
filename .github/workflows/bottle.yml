@@ -1,0 +1,132 @@
+name: Bottle
+
+# Bottling is an explicit act, not something that happens on every push.
+#
+# A bottle is a precompiled binary Homebrew downloads instead of building.
+# Keel takes about three minutes to install from source, and roughly 88% of
+# that is swift-syntax — 187,000 lines of generated code, optimised in release.
+# Keel itself is 3% of what compiles. A bottle turns that into seconds.
+#
+# This runs on GitHub's runners rather than on a maintainer's machine for two
+# reasons. Bottles are per-macOS-version *and* per-architecture, so one machine
+# yields one bottle and covering the matrix needs runners. And `brew bottle` is
+# a developer command that has broken a working Homebrew before now; CI is a
+# machine nobody minds breaking.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Keel version to bottle, without the v (e.g. 1.2.0)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+env:
+  # Where the built bottles will live, and therefore where the formula must be
+  # told to look for them. Set once so the build and the release cannot drift.
+  ROOT_URL: https://github.com/GRimAce11/homebrew-tap/releases/download/bottle-${{ inputs.version }}
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    # One runner retiring must not cost the bottles the others produced.
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-15, macos-14, macos-13]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Tap, and use the formula from this branch
+        run: |
+          brew tap GRimAce11/tap
+          # Bottle what is on this branch, not what is on main. Without this
+          # the workflow would happily bottle the previous release.
+          cp Formula/keel.rb "$(brew --repository GRimAce11/tap)/Formula/keel.rb"
+          brew info --formula grimace11/tap/keel | head -3
+
+      - name: Check the formula is the version being bottled
+        run: |
+          DECLARED=$(grep -o 'v[0-9.]*\.tar\.gz' Formula/keel.rb | head -1 | sed 's/^v//;s/\.tar\.gz$//')
+          if [ "$DECLARED" != "${{ inputs.version }}" ]; then
+            echo "Formula points at $DECLARED but you asked to bottle ${{ inputs.version }}."
+            echo "Update Formula/keel.rb on this branch first."
+            exit 1
+          fi
+
+      - name: Build from source
+        run: brew install --build-bottle --verbose grimace11/tap/keel
+
+      - name: Bottle it
+        run: brew bottle --json --no-rebuild --root-url="$ROOT_URL" grimace11/tap/keel
+
+      - name: Prove the bottled binary actually works
+        run: |
+          # A bottle that installs and cannot generate is the failure mode that
+          # input checking misses — it is how the resource bundle was found
+          # missing the first time round.
+          keel --version
+          keel new BottleProbe --yes --no-git -o "$RUNNER_TEMP"
+          test -f "$RUNNER_TEMP/BottleProbe/BottleProbe.xcodeproj/project.pbxproj"
+          keel inspect "$RUNNER_TEMP/BottleProbe" | head -3
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bottle-${{ matrix.os }}
+          path: |
+            *.bottle.tar.gz
+            *.bottle.json
+          if-no-files-found: error
+
+  publish:
+    name: Publish bottles
+    needs: build
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          path: bottles
+          merge-multiple: true
+
+      - name: Merge the digests into the formula
+        run: |
+          brew tap GRimAce11/tap
+          cp Formula/keel.rb "$(brew --repository GRimAce11/tap)/Formula/keel.rb"
+          cd bottles
+          brew bottle --merge --write --no-commit ./*.bottle.json
+          cp "$(brew --repository GRimAce11/tap)/Formula/keel.rb" "$GITHUB_WORKSPACE/Formula/keel.rb"
+
+      - name: Publish the bottles
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "bottle-${{ inputs.version }}" \
+            --title "Bottles for keel ${{ inputs.version }}" \
+            --notes "Precompiled binaries for \`brew install GRimAce11/tap/keel\`. Not a Keel release — see the Keel repository for those." \
+            --repo GRimAce11/homebrew-tap || true
+          gh release upload "bottle-${{ inputs.version }}" bottles/*.bottle.tar.gz \
+            --clobber --repo GRimAce11/homebrew-tap
+
+      - name: Show the formula change to apply
+        run: |
+          {
+            echo "## Formula change"
+            echo
+            echo 'Commit this to \`Formula/keel.rb\` on the branch, then merge:'
+            echo
+            echo '```ruby'
+            sed -n '/bottle do/,/end/p' Formula/keel.rb
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: formula-with-bottle-block
+          path: Formula/keel.rb
