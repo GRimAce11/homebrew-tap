@@ -5,6 +5,12 @@ class Keel < Formula
   sha256 "47a2e8f38f4c758492e53ed95e76f9915ec245bfab0418376a6a05b6c19a456b"
   license "MIT"
 
+  bottle do
+    root_url "https://github.com/GRimAce11/homebrew-tap/releases/download/bottle-1.2.2"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "bd011653bea5e73dd9754e786cb36180932403ac34da962b5fa0104ad4c6f560"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "e196decb3feacbe6a8142c2055e6361467d5e06958218ab28acfd31d20b0fec7"
+  end
+
   head "https://github.com/GRimAce11/Keel.git", branch: "main"
 
   # Swift 6.0 tools, which ship with Xcode 16.0. This said Xcode 16.3 and
