@@ -6,9 +6,17 @@ class Keel < Formula
   license "MIT"
   head "https://github.com/GRimAce11/Keel.git", branch: "main"
 
-  # Package.swift declares swift-tools-version 6.1, which ships with Xcode 16.3.
+  # v1.2.0's Package.swift declares swift-tools-version 6.1, which ships with
+  # Xcode 16.3 — and Xcode 16.3 cannot be installed before macOS 15. This said
+  # :ventura for several releases, which promised an install that could not
+  # work: a Sonoma user got "Xcode 16.3 cannot be installed on macOS 14"
+  # instead of a binary. Found by a bottle build on a macos-14 runner.
+  #
+  # Keel itself runs on Ventura; it is the *build* that cannot happen there.
+  # From the next release the manifest asks for 6.0, and this can drop back to
+  # :sonoma with xcode 16.0.
   depends_on xcode: ["16.3", :build]
-  depends_on macos: :ventura
+  depends_on macos: :sequoia
 
   def install
     # --disable-sandbox: SwiftPM resolves swift-argument-parser and swift-syntax
