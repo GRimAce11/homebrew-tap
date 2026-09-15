@@ -51,6 +51,19 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Select the newest installed Xcode
+        run: |
+          # The images carry several Xcodes and activate an older one. Homebrew
+          # reads the *active* version, so without this a runner that has the
+          # required Xcode still fails with "a full installation of Xcode.app
+          # 16.0 is required" — which reads like the image lacking it.
+          # Keel's own CI has always done this; the bottle workflow had not.
+          XCODE=$(ls -d /Applications/Xcode_*.app | sort -V | tail -1)
+          echo "Using $XCODE"
+          sudo xcode-select -s "$XCODE"
+          xcodebuild -version
+          swift --version
+
       - name: Tap, and use the formula from this branch
         run: |
           brew tap GRimAce11/tap
