@@ -82,6 +82,28 @@ jobs:
           cp Formula/keel.rb "$(brew --repository GRimAce11/tap)/Formula/keel.rb"
           brew info --formula grimace11/tap/keel | head -3
 
+      - name: Refuse to rebuild bottles the formula already points at
+        run: |
+          # Bottles are not byte-reproducible: rebuilding a version produces
+          # different archives, and the upload clobbers what was there. If the
+          # formula already carries a bottle block for this version, that
+          # replaces the exact bytes it names — and every install fails with
+          # "Bottle reports different checksum" from the moment the run
+          # finishes until somebody commits the new digests.
+          #
+          # Which is not hypothetical; it is how Tahoe got added.
+          if grep -q "bottle do" Formula/keel.rb && \
+             grep -q "bottle-${{ inputs.version }}" Formula/keel.rb; then
+            echo "Formula already has bottles for ${{ inputs.version }}."
+            echo
+            echo "Rebuilding them replaces the files it points at, and installs"
+            echo "break until the new digests are committed. If that is what you"
+            echo "want — adding a platform, say — remove the bottle block from"
+            echo "Formula/keel.rb on a branch first, and merge the new one when"
+            echo "the run finishes."
+            exit 1
+          fi
+
       - name: Check the formula is the version being bottled
         run: |
           DECLARED=$(grep -o 'v[0-9.]*\.tar\.gz' Formula/keel.rb | head -1 | sed 's/^v//;s/\.tar\.gz$//')
