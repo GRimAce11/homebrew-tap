@@ -142,7 +142,16 @@ jobs:
             --title "Bottles for keel ${{ inputs.version }}" \
             --notes "Precompiled binaries for \`brew install GRimAce11/tap/keel\`. Not a Keel release — see the Keel repository for those." \
             --repo GRimAce11/homebrew-tap || true
-          gh release upload "bottle-${{ inputs.version }}" bottles/*.bottle.tar.gz \
+          # `brew bottle` writes keel--1.2.2.arm64_sequoia.bottle.tar.gz, with
+          # two dashes. The URL Homebrew later requests has one. Uploading the
+          # name as written publishes a file nobody will ever ask for, and the
+          # formula 404s for everyone the moment its bottle block lands —
+          # which is exactly what happened the first time.
+          cd bottles
+          for file in *.bottle.tar.gz; do
+            mv "$file" "${file/--/-}"
+          done
+          gh release upload "bottle-${{ inputs.version }}" ./*.bottle.tar.gz \
             --clobber --repo GRimAce11/homebrew-tap
 
       - name: Show the formula change to apply
