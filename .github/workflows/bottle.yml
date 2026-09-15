@@ -67,6 +67,11 @@ jobs:
       - name: Tap, and use the formula from this branch
         run: |
           brew tap GRimAce11/tap
+          # Homebrew 7 refuses to load a formula from a tap nobody has
+          # vouched for, which is right: a tap is arbitrary Ruby. The runner
+          # is ephemeral and this is our own tap, so trusting it here grants
+          # nothing that cloning it did not.
+          brew trust --tap GRimAce11/tap
           # Bottle what is on this branch, not what is on main. Without this
           # the workflow would happily bottle the previous release.
           cp Formula/keel.rb "$(brew --repository GRimAce11/tap)/Formula/keel.rb"
@@ -120,6 +125,10 @@ jobs:
       - name: Merge the digests into the formula
         run: |
           brew tap GRimAce11/tap
+          # `brew bottle` is a developer command, and those are exactly what
+          # the trust check guards. Installing worked without this; merging
+          # did not, which is how it went unnoticed until the last job.
+          brew trust --tap GRimAce11/tap
           cp Formula/keel.rb "$(brew --repository GRimAce11/tap)/Formula/keel.rb"
           cd bottles
           brew bottle --merge --write --no-commit ./*.bottle.json
