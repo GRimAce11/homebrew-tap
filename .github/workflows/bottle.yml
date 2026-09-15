@@ -46,7 +46,12 @@ jobs:
         #
         # macos-14 is back from v1.2.1, which lowered the tools version to
         # Swift 6.0 — it cannot host the Xcode 16.3 that 6.1 required.
-        os: [macos-15, macos-14]
+        #
+        # macos-26 is arm64 and free, and without it every Mac on current
+        # macOS falls back to the Sequoia bottle. Intel was considered and
+        # declined: the only remaining x86_64 label is billed, and Apple
+        # stopped shipping Intel in 2023.
+        os: [macos-26, macos-15, macos-14]
 
     steps:
       - uses: actions/checkout@v4
