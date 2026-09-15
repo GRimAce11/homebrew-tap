@@ -44,9 +44,9 @@ jobs:
         # assigned a runner blocks everything downstream rather than failing.
         # An unusable label is worse than a missing platform.
         #
-        # macos-14 belongs here from the first release built with Swift 6.0
-        # tools — it cannot host the Xcode 16.3 that 6.1 requires.
-        os: [macos-15]
+        # macos-14 is back from v1.2.1, which lowered the tools version to
+        # Swift 6.0 — it cannot host the Xcode 16.3 that 6.1 required.
+        os: [macos-15, macos-14]
 
     steps:
       - uses: actions/checkout@v4

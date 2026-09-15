@@ -1,22 +1,20 @@
 class Keel < Formula
   desc "Create, understand, and maintain iOS projects from the terminal"
   homepage "https://github.com/GRimAce11/Keel"
-  url "https://github.com/GRimAce11/Keel/archive/refs/tags/v1.2.0.tar.gz"
-  sha256 "367760e27de781a4c535f94998223b690adde4cf906dd824e5d76744bb9739dd"
+  url "https://github.com/GRimAce11/Keel/archive/refs/tags/v1.2.1.tar.gz"
+  sha256 "7632271e33d0048c67e3bc89e3c06028bb222f5374536cc1216cd071e7d7aa0e"
   license "MIT"
   head "https://github.com/GRimAce11/Keel.git", branch: "main"
 
-  # v1.2.0's Package.swift declares swift-tools-version 6.1, which ships with
-  # Xcode 16.3 — and Xcode 16.3 cannot be installed before macOS 15. This said
+  # Swift 6.0 tools, which ship with Xcode 16.0. This said Xcode 16.3 and
   # :ventura for several releases, which promised an install that could not
-  # work: a Sonoma user got "Xcode 16.3 cannot be installed on macOS 14"
-  # instead of a binary. Found by a bottle build on a macos-14 runner.
+  # work — 16.3 cannot be installed before macOS 15, so a Sonoma user got a
+  # compile error rather than a binary. v1.2.1 lowered the tools version, and
+  # this is the first formula that can honestly reach back to Sonoma.
   #
-  # Keel itself runs on Ventura; it is the *build* that cannot happen there.
-  # From the next release the manifest asks for 6.0, and this can drop back to
-  # :sonoma with xcode 16.0.
-  depends_on xcode: ["16.3", :build]
-  depends_on macos: :sequoia
+  # Keel runs on Ventura; it is the build that cannot happen there.
+  depends_on xcode: ["16.0", :build]
+  depends_on macos: :sonoma
 
   def install
     # --disable-sandbox: SwiftPM resolves swift-argument-parser and swift-syntax
