@@ -1,16 +1,9 @@
 class Keel < Formula
   desc "Create, understand, and maintain iOS projects from the terminal"
   homepage "https://github.com/GRimAce11/Keel"
-  url "https://github.com/GRimAce11/Keel/archive/refs/tags/v1.2.2.tar.gz"
-  sha256 "47a2e8f38f4c758492e53ed95e76f9915ec245bfab0418376a6a05b6c19a456b"
+  url "https://github.com/GRimAce11/Keel/archive/refs/tags/v1.3.0.tar.gz"
+  sha256 "050086b87ea5d91c2fa0ce8d2b43d7a8f8414d5094adba1e764239b271dfd158"
   license "MIT"
-
-  bottle do
-    root_url "https://github.com/GRimAce11/homebrew-tap/releases/download/bottle-1.2.2"
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:   "053d32530b187070c5ba5390b03a10ca67b363e0c98eee5302e4cca656e86896"
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "283e81863378d941defc1d32f9a263ff49ecf406db32b60daab1e5b17da3b086"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "67691e185a6d2eac4fa9d0740b2815b834fe8933606f21323575a8fd04867559"
-  end
 
   head "https://github.com/GRimAce11/Keel.git", branch: "main"
 
