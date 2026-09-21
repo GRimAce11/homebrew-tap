@@ -1,19 +1,11 @@
 class Keel < Formula
   desc "Create, understand, and maintain iOS projects from the terminal"
   homepage "https://github.com/GRimAce11/Keel"
-  url "https://github.com/GRimAce11/Keel/archive/refs/tags/v1.3.1.tar.gz"
-  sha256 "f5b437f79179b317ba10dc4a4829160d443dcc01adc2e007b4f0853ef2363369"
+  url "https://github.com/GRimAce11/Keel/archive/refs/tags/v1.4.0.tar.gz"
+  sha256 "8290bdaa79cf18e35d129957c93307ed396321521c2b5f891da601c651b6ed5e"
   license "MIT"
 
   head "https://github.com/GRimAce11/Keel.git", branch: "main"
-
-  bottle do
-    root_url "https://github.com/GRimAce11/homebrew-tap/releases/download/bottle-1.3.1"
-    sha256 cellar: :any_skip_relocation, arm64_tahoe:   "f1ed389a252d32934ff03bb5db949964de917a62aee3e6c5f0c44f3ffc6fece7"
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "00c41b87459077a4690d259c89c7ec982415f04e6d729005b476305c434fc2ff"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "2d5f11cb76d0d747eb1840e286a5cb30a903387c145c9fdd42cf34e5c723c617"
-  end
-
 
   # Swift 6.0 tools, which ship with Xcode 16.0. This said Xcode 16.3 and
   # :ventura for several releases, which promised an install that could not
