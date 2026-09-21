@@ -7,6 +7,13 @@ class Keel < Formula
 
   head "https://github.com/GRimAce11/Keel.git", branch: "main"
 
+  bottle do
+    root_url "https://github.com/GRimAce11/homebrew-tap/releases/download/bottle-1.4.0"
+    sha256 cellar: :any_skip_relocation, arm64_tahoe:   "3ea201866c0b146f75d57fcf87df566edfaea1839b8618691e141d5414a556aa"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "f8efc9f2e6720b795f9ddf0bab2dd6f6a65511245f81efa7e9c665cd2b785225"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "7aa0701ba6ba5ac135b4bbf3015f4a1756fff6c82507cee7f2ce8f77a8283eeb"
+  end
+
   # Swift 6.0 tools, which ship with Xcode 16.0. This said Xcode 16.3 and
   # :ventura for several releases, which promised an install that could not
   # work — 16.3 cannot be installed before macOS 15, so a Sonoma user got a
